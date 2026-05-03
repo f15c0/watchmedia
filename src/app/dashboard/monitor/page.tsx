@@ -26,20 +26,18 @@ export default function MonitorPage() {
         <FilterDock activeFilter={filter} onFilterChange={setFilter} />
 
         {/* Mobile keywords trigger */}
-        <button
-          onClick={() => setKeywordsOpen(true)}
-          className="md:hidden w-full flex items-center gap-3 rounded-2xl px-4 py-3 shadow-md active:scale-[0.98] transition-transform duration-100 overflow-hidden relative"
-          style={{ background: "linear-gradient(135deg, #1e2d4a 0%, #0f1729 100%)" }}
-        >
-          <div className="h-9 w-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
-            <Hash className="h-4 w-4 text-white" />
-          </div>
-          <div className="flex-1 text-left">
-            <p className="text-[13px] font-bold text-white leading-none">Manage Keywords</p>
-            <p className="text-[10px] text-sky-300/80 mt-0.5">Add, remove &amp; scrape</p>
-          </div>
-          <ChevronUp className="h-4 w-4 text-white/40 shrink-0" />
-        </button>
+        <div className="md:hidden flex justify-center -mt-1">
+          <button
+            onClick={() => setKeywordsOpen(true)}
+            className="inline-flex items-center gap-2.5 rounded-2xl bg-[#0f1729] px-5 py-2.5 shadow-lg shadow-slate-900/20 active:scale-95 transition-transform duration-100"
+          >
+            <div className="h-7 w-7 rounded-lg bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
+              <Hash className="h-3.5 w-3.5 text-white" />
+            </div>
+            <span className="text-[13px] font-semibold text-white">Manage Keywords</span>
+            <ChevronUp className="h-3.5 w-3.5 text-white/50 shrink-0" />
+          </button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:flex-1 md:min-h-0">
           {/* Keyword panel — desktop only */}
