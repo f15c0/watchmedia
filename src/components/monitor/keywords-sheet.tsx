@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { KeywordManager } from "./keyword-manager";
 
@@ -9,6 +10,15 @@ interface KeywordsSheetProps {
 }
 
 export function KeywordsSheet({ open, onClose }: KeywordsSheetProps) {
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -34,7 +44,7 @@ export function KeywordsSheet({ open, onClose }: KeywordsSheetProps) {
             className="fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-white rounded-t-3xl shadow-2xl md:hidden overflow-hidden"
             style={{ maxHeight: "82vh" }}
           >
-            {/* Drag handle only — no extra header */}
+            {/* Drag handle */}
             <div className="flex justify-center pt-2.5 pb-1 shrink-0">
               <div className="h-1 w-10 rounded-full bg-white/40" />
             </div>
