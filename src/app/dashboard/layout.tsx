@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/layout/sidebar";
+import { MobileDrawer } from "@/components/layout/mobile-drawer";
 
 export default function DashboardLayout({
   children,
@@ -8,7 +9,8 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex flex-1 flex-col overflow-hidden">{children}</main>
+      <MobileDrawer />
+      <main className="flex flex-1 flex-col overflow-hidden min-w-0">{children}</main>
     </div>
   );
 }
