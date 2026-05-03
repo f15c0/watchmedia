@@ -220,7 +220,7 @@ export function KeywordManager() {
       </div>
 
       <div className="px-4 py-3 border-t border-border/40">
-        <p className="text-[10px] text-muted-foreground text-center">Auto-scrapes every 5 min in production</p>
+        <p className="text-[10px] text-muted-foreground text-center">Auto-scrapes every 5 min</p>
       </div>
     </div>
   );
