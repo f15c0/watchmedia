@@ -47,7 +47,7 @@ export function FilterDock({ activeFilter, onFilterChange }: FilterDockProps) {
   const activeLabel = filters.find((f) => f.value === activeFilter)?.title ?? '';
 
   return (
-    <div className='sticky top-0 z-10 md:static md:z-auto -mx-4 md:mx-0 px-4 md:px-0 pt-3 pb-2 md:pt-0 md:pb-0 bg-white/90 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none border-b border-slate-100 md:border-none flex flex-col items-center w-[calc(100%+2rem)] md:w-full gap-1.5 md:gap-2 mb-0 md:mb-5'>
+    <div className='sticky top-0 z-10 md:static md:z-auto pt-3 pb-2 md:pt-0 md:pb-0 flex flex-col items-center w-full gap-1.5 md:gap-2 mb-0 md:mb-5'>
 
       {/* Mobile dock — smaller, tighter */}
       <div className="md:hidden">
