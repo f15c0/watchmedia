@@ -119,9 +119,11 @@ export function KeywordManager() {
     animateFrame(start);
   };
 
+  const isValid = input.trim().length >= 3;
+
   async function addKeyword(e: React.FormEvent) {
     e.preventDefault();
-    if (!input.trim() || animating) return;
+    if (!isValid || animating) return;
 
     // Trigger vanish animation
     setAnimating(true);
@@ -226,10 +228,10 @@ export function KeywordManager() {
             />
           </div>
           <motion.button
-            whileTap={{ scale: 0.95 }}
+            whileTap={isValid && !loading && !animating ? { scale: 0.95 } : {}}
             type="submit"
-            disabled={loading || animating}
-            className="h-11 w-11 flex items-center justify-center rounded-full bg-sky-600 text-white hover:bg-sky-700 disabled:opacity-50 transition-colors shrink-0 shadow-sm"
+            disabled={!isValid || loading || animating}
+            className="h-11 w-11 flex items-center justify-center rounded-full bg-sky-600 text-white hover:bg-sky-700 disabled:opacity-30 disabled:cursor-not-allowed disabled:scale-100 transition-all duration-200 shrink-0 shadow-sm"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
           </motion.button>
