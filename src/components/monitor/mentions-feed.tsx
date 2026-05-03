@@ -148,7 +148,7 @@ export function MentionsFeed({ filter }: { filter: string }) {
 
       {/* Scrollable feed with bottom gradient fade */}
       <div className="relative flex-1 min-h-0">
-        <div className="h-full overflow-y-auto pr-0.5 space-y-2.5 pb-10">
+        <div className="h-full overflow-y-auto pr-3 space-y-2.5 pb-10 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full">
           {initialLoading ? (
             <>
               {Array.from({ length: 5 }).map((_, i) => (
