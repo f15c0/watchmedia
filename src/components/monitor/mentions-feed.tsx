@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ArrowUpRight, Wifi, WifiOff, Rss } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { LinkPreview } from "@/components/ui/link-preview";
 
 interface Mention {
   id: string;
@@ -205,15 +206,15 @@ export function MentionsFeed({ filter }: { filter: string }) {
                           )}
                         </div>
                         {mention.url ? (
-                          <a
-                            href={mention.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <LinkPreview
+                            url={mention.url}
+                            width={280}
+                            height={160}
                             className="inline-flex items-center gap-1.5 shrink-0 rounded-lg bg-sky-600 hover:bg-sky-700 px-3 py-1.5 text-[11px] font-bold text-white transition-all duration-150 shadow-sm shadow-sky-500/20 hover:shadow-md hover:shadow-sky-500/30 active:scale-95"
                           >
                             Read
                             <ArrowUpRight className="h-3 w-3" />
-                          </a>
+                          </LinkPreview>
                         ) : (
                           <div />
                         )}
