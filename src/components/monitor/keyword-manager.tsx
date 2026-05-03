@@ -27,6 +27,17 @@ export function KeywordManager({ onClose }: { onClose?: () => void } = {}) {
   const [scraping, setScraping] = useState(false);
   const [deletePopover, setDeletePopover] = useState<string | null>(null);
   const [animating, setAnimating] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [swipedItem, setSwipedItem] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -262,69 +273,123 @@ export function KeywordManager({ onClose }: { onClose?: () => void } = {}) {
               <p className="text-xs text-muted-foreground/70 mt-0.5">Add one above to start monitoring</p>
             </motion.div>
           )}
-          {keywords.map((kw, i) => (
-            <motion.div
-              key={kw.id}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ delay: i * 0.03, duration: 0.2 }}
-              className="group relative flex items-center justify-between rounded-md bg-white border border-slate-200/60 px-3.5 py-3 hover:border-slate-300 hover:shadow-sm hover:-translate-y-px transition-all duration-150"
-            >
-              <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                <div className="h-1.5 w-1.5 rounded-full bg-sky-500 shrink-0" />
-                <span className="text-[13px] font-medium capitalize text-slate-700 truncate">
-                  {kw.term}
-                </span>
-              </div>
+          {keywords.map((kw, i) => {
+            const isOpen = swipedItem === kw.id;
+            
+            return (
+              <div key={kw.id} className="relative overflow-hidden rounded-md">
+                {/* Delete button background - only visible on mobile swipe */}
+                {isMobile && (
+                  <div className="absolute inset-0 bg-red-500 flex items-center justify-end pr-6">
+                    <button
+                      onClick={() => setDeletePopover(kw.id)}
+                      className="text-white font-semibold text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+                
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ 
+                    opacity: 1, 
+                    y: 0,
+                    x: isMobile && isOpen ? -80 : 0
+                  }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ 
+                    delay: i * 0.03, 
+                    duration: 0.2,
+                    x: { type: "spring", stiffness: 300, damping: 30 }
+                  }}
+                  drag={isMobile ? "x" : false}
+                  dragConstraints={{ left: -80, right: 0 }}
+                  dragElastic={0.1}
+                  dragMomentum={false}
+                  onDragEnd={(e, info) => {
+                    if (isMobile) {
+                      if (info.offset.x < -40) {
+                        setSwipedItem(kw.id);
+                      } else {
+                        setSwipedItem(null);
+                      }
+                    }
+                  }}
+                  onTap={() => {
+                    if (isMobile && isOpen) {
+                      setSwipedItem(null);
+                    }
+                  }}
+                  className="group relative flex items-center justify-between rounded-md bg-white border border-slate-200/60 px-3.5 py-3 hover:border-slate-300 hover:shadow-sm hover:-translate-y-px transition-all duration-150"
+                >
+                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                    <div className="h-1.5 w-1.5 rounded-full bg-sky-500 shrink-0" />
+                    <span className="text-[13px] font-medium capitalize text-slate-700 truncate">
+                      {kw.term}
+                    </span>
+                  </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[11px] font-semibold text-sky-600 bg-sky-50 rounded-md px-2 py-1 tabular-nums">
-                  {kw._count.mentions}
-                </span>
-                <Popover open={deletePopover === kw.id} onOpenChange={(open) => setDeletePopover(open ? kw.id : null)}>
-                  <PopoverTrigger
-                    onClick={(e) => { e.stopPropagation(); setDeletePopover(kw.id); }}
-                    className="opacity-0 group-hover:opacity-100 h-5 w-5 flex items-center justify-center rounded text-slate-400 hover:text-red-600 transition-all duration-150 cursor-pointer"
-                  >
-                    <X className="h-3 w-3" />
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-3" align="end">
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">Remove keyword?</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          This will stop monitoring "<span className="font-medium">{kw.term}</span>"
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={(e) => { e.stopPropagation(); setDeletePopover(null); }}
-                          className="flex-1 h-8 text-xs"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={(e) => { e.stopPropagation(); removeKeyword(kw.id); }}
-                          className="flex-1 h-8 text-xs bg-red-600 hover:bg-red-700"
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-[11px] font-semibold text-sky-600 bg-sky-50 rounded-md px-2 py-1 tabular-nums">
+                      {kw._count.mentions}
+                    </span>
+                    <Popover open={deletePopover === kw.id} onOpenChange={(open) => {
+                      setDeletePopover(open ? kw.id : null);
+                      if (!open && isMobile) setSwipedItem(null);
+                    }}>
+                      <PopoverTrigger
+                        onClick={(e) => { e.stopPropagation(); setDeletePopover(kw.id); }}
+                        className="opacity-0 group-hover:opacity-100 h-5 w-5 flex items-center justify-center rounded text-slate-400 hover:text-red-600 transition-all duration-150 cursor-pointer"
+                      >
+                        <X className="h-3 w-3" />
+                      </PopoverTrigger>
+                      <PopoverContent className="w-64 p-3" align="end">
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">Remove keyword?</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              This will stop monitoring "<span className="font-medium">{kw.term}</span>"
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => { 
+                                e.stopPropagation(); 
+                                setDeletePopover(null);
+                                if (isMobile) setSwipedItem(null);
+                              }}
+                              className="flex-1 h-8 text-xs"
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={(e) => { 
+                                e.stopPropagation(); 
+                                removeKeyword(kw.id);
+                                if (isMobile) setSwipedItem(null);
+                              }}
+                              className="flex-1 h-8 text-xs bg-red-600 hover:bg-red-700"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
-          ))}
+            );
+          })}
         </AnimatePresence>
       </div>
 
       <div className="px-4 py-3 border-t border-border/40">
-        <p className="text-[10px] text-muted-foreground text-center">Auto-scrapes every 5 min</p>
+        <p className="text-[10px] text-muted-foreground text-center">Auto-scrapes every 5 min in production</p>
       </div>
     </div>
   );
