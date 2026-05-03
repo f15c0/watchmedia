@@ -7,7 +7,7 @@ import { MentionsFeed } from "@/components/monitor/mentions-feed";
 import { AlertBanner } from "@/components/monitor/alert-banner";
 import { FilterDock } from "@/components/monitor/filter-dock";
 import { KeywordsSheet } from "@/components/monitor/keywords-sheet";
-import { Hash, ChevronUp } from "lucide-react";
+import { ChevronUp } from "lucide-react";
 
 export default function MonitorPage() {
   const [filter, setFilter] = useState("ALL");
@@ -31,7 +31,6 @@ export default function MonitorPage() {
             onClick={() => setKeywordsOpen(true)}
             className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-[12px] font-semibold text-sky-700 shadow-sm active:scale-95 transition-all duration-150"
           >
-            <Hash className="h-3.5 w-3.5" />
             Manage Keywords
             <ChevronUp className="h-3 w-3 opacity-60" />
           </button>
