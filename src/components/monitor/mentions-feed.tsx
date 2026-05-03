@@ -5,7 +5,7 @@ import { getPusherClient } from "@/lib/pusher-client";
 import { formatDistanceToNow } from "date-fns";
 import { ArrowUpRight, Wifi, WifiOff, Rss } from "lucide-react";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { LinkPreview } from "@/components/ui/link-preview";
 import { FaNewspaper, FaTwitter, FaFacebook, FaInstagram } from "react-icons/fa";
 import { MdRadio } from "react-icons/md";
@@ -39,11 +39,11 @@ const SOURCE_CONFIG: Record<string, {
   TV:        { label: "TV",        icon: PiTelevisionSimpleBold, iconColor: "text-violet-600", badgeGradient: "from-violet-600/20 via-violet-600/8 to-transparent", cardGradient: "from-transparent via-white to-white" },
 };
 
-const wiggle = {
+const wiggle: Variants = {
   rest: { x: 0, rotate: 0 },
   hover: {
     x: [0, -3, 3, -2, 2, 0],
-    transition: { duration: 0.4, ease: "easeInOut" },
+    transition: { duration: 0.4, ease: "easeInOut" as const },
   },
 };
 
