@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  keywords  Keyword[]
+  posts     Post[]
+}
+
+model Keyword {
+  id        String   @id @default(cuid())
+  term      String
+  userId    String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mentions  Mention[]
+
+  @@unique([term, userId])
+}
+
+model Mention {
+  id          String        @id @default(cuid())
+  keywordId   String
+  source      MentionSource
+  title       String
+  content     String        @db.Text
+  url         String?
+  author      String?
+  sentiment   Sentiment     @default(NEUTRAL)
+  sentimentScore Float?
+  publishedAt DateTime
+  createdAt   DateTime      @default(now())
+
+  keyword     Keyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id          String     @id @default(cuid())
+  userId      String
+  platform    Platform[]
+  content     String     @db.Text
+  mediaUrl    String?
+  scheduledAt DateTime
+  publishedAt DateTime?
+  status      PostStatus @default(DRAFT)
+  aiGenerated Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  title       String
+  keywordIds  String[]
+  dateFrom    DateTime
+  dateTo      DateTime
+  pdfUrl      String?
+  createdAt   DateTime @default(now())
+}
+
+enum MentionSource {
+  NEWS
+  TWITTER
+  FACEBOOK
+  INSTAGRAM
+  RADIO
+  TV
+}
+
+enum Sentiment {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+}
+
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  FAILED
+}
+
+enum Platform {
+  TWITTER
+  FACEBOOK
+  INSTAGRAM
+  LINKEDIN
+}
