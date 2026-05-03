@@ -94,7 +94,7 @@ export async function POST() {
           title: item.title ?? "Untitled",
           content: item.contentSnippet ?? item.title ?? "",
           url: item.link,
-          author: item.creator ?? item.author,
+          author: item.creator ?? (item as Record<string, string>).author,
           sentiment,
           sentimentScore,
           publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
