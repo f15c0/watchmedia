@@ -232,7 +232,7 @@ export function KeywordManager({ onClose }: { onClose?: () => void } = {}) {
               value={input}
               onChange={(e) => { if (!animating) setInput(e.target.value); }}
               className={cn(
-                "h-11 text-sm bg-white border border-slate-200 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-300 placeholder:text-slate-400 rounded-lg py-3 px-4",
+                "h-11 text-base md:text-sm bg-white border border-slate-200 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-300 placeholder:text-slate-400 rounded-lg py-3 px-4",
                 animating && "text-transparent caret-transparent"
               )}
             />
