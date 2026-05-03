@@ -7,6 +7,9 @@ import { ArrowUpRight, Wifi, WifiOff, Rss } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { LinkPreview } from "@/components/ui/link-preview";
+import { FaNewspaper, FaTwitter, FaFacebook, FaInstagram } from "react-icons/fa";
+import { MdRadio } from "react-icons/md";
+import { PiTelevisionSimpleBold } from "react-icons/pi";
 
 interface Mention {
   id: string;
@@ -21,29 +24,43 @@ interface Mention {
   keyword: { term: string };
 }
 
-const SOURCE_CONFIG: Record<string, { label: string; bg: string; text: string; border: string }> = {
-  NEWS:      { label: "News",      bg: "bg-blue-500/10",   text: "text-blue-700",   border: "border-blue-200" },
-  TWITTER:   { label: "Twitter",   bg: "bg-sky-500/10",    text: "text-sky-700",    border: "border-sky-200" },
-  FACEBOOK:  { label: "Facebook",  bg: "bg-indigo-500/10", text: "text-indigo-700", border: "border-indigo-200" },
-  INSTAGRAM: { label: "Instagram", bg: "bg-rose-500/10",   text: "text-rose-700",   border: "border-rose-200" },
-  RADIO:     { label: "Radio",     bg: "bg-orange-500/10", text: "text-orange-700", border: "border-orange-200" },
-  TV:        { label: "TV",        bg: "bg-purple-500/10", text: "text-purple-700", border: "border-purple-200" },
+const SOURCE_CONFIG: Record<string, {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  iconColor: string;
+  badgeGradient: string;
+  cardGradient: string;
+}> = {
+  NEWS:      { label: "News",      icon: FaNewspaper,            iconColor: "text-red-600",    badgeGradient: "from-red-600/20 via-red-600/8 to-transparent",      cardGradient: "from-transparent via-white to-white" },
+  TWITTER:   { label: "Twitter",   icon: FaTwitter,              iconColor: "text-[#1DA1F2]",  badgeGradient: "from-[#1DA1F2]/20 via-[#1DA1F2]/8 to-transparent",  cardGradient: "from-transparent via-white to-white" },
+  FACEBOOK:  { label: "Facebook",  icon: FaFacebook,             iconColor: "text-[#1877F2]",  badgeGradient: "from-[#1877F2]/20 via-[#1877F2]/8 to-transparent",  cardGradient: "from-transparent via-white to-white" },
+  INSTAGRAM: { label: "Instagram", icon: FaInstagram,            iconColor: "text-[#E1306C]",  badgeGradient: "from-[#E1306C]/20 via-[#E1306C]/8 to-transparent",  cardGradient: "from-transparent via-white to-white" },
+  RADIO:     { label: "Radio",     icon: MdRadio,                iconColor: "text-amber-500",  badgeGradient: "from-amber-500/20 via-amber-500/8 to-transparent",  cardGradient: "from-transparent via-white to-white" },
+  TV:        { label: "TV",        icon: PiTelevisionSimpleBold, iconColor: "text-violet-600", badgeGradient: "from-violet-600/20 via-violet-600/8 to-transparent", cardGradient: "from-transparent via-white to-white" },
 };
 
-const SENTIMENT_CONFIG: Record<string, { label: string; bg: string; text: string; border: string; dot: string }> = {
-  POSITIVE: { label: "Positive", bg: "bg-emerald-50",  text: "text-emerald-700", border: "border-emerald-200", dot: "bg-emerald-500" },
-  NEGATIVE: { label: "Negative", bg: "bg-red-50",      text: "text-red-700",     border: "border-red-200",     dot: "bg-red-500" },
-  NEUTRAL:  { label: "Neutral",  bg: "bg-slate-100",   text: "text-slate-500",   border: "border-slate-200",   dot: "bg-slate-400" },
+const wiggle = {
+  rest: { x: 0, rotate: 0 },
+  hover: {
+    x: [0, -3, 3, -2, 2, 0],
+    transition: { duration: 0.4, ease: "easeInOut" },
+  },
+};
+
+const SENTIMENT_RIBBON: Record<string, { label: string; bg: string; text: string; shadow: string }> = {
+  POSITIVE: { label: "Positive", bg: "bg-emerald-500", text: "text-white", shadow: "shadow-emerald-900/30" },
+  NEGATIVE: { label: "Negative", bg: "bg-red-500",     text: "text-white", shadow: "shadow-red-900/30" },
+  NEUTRAL:  { label: "Neutral",  bg: "bg-slate-400",   text: "text-white", shadow: "shadow-slate-900/20" },
 };
 
 function MentionSkeleton() {
   return (
-    <div className="rounded-xl border border-border/40 bg-white p-4 space-y-3 animate-pulse">
+    <div className="rounded-xl border border-border/40 bg-white p-4 space-y-3 animate-pulse overflow-hidden">
       <div className="flex items-center justify-between">
-        <div className="flex gap-1.5">
-          <div className="h-5 w-14 rounded-full bg-slate-100" />
-          <div className="h-5 w-16 rounded-full bg-slate-100" />
-          <div className="h-5 w-12 rounded-full bg-slate-100" />
+        <div className="flex gap-1.5 items-center">
+          <div className="h-7 w-7 rounded-full bg-slate-100" />
+          <div className="h-4 w-16 rounded-full bg-slate-100" />
+          <div className="h-4 w-12 rounded-full bg-slate-100" />
         </div>
         <div className="h-4 w-20 rounded bg-slate-100" />
       </div>
@@ -154,7 +171,8 @@ export function MentionsFeed({ filter }: { filter: string }) {
             <AnimatePresence initial={false}>
               {filtered.map((mention, i) => {
                 const src = SOURCE_CONFIG[mention.source] ?? SOURCE_CONFIG.NEWS;
-                const snt = SENTIMENT_CONFIG[mention.sentiment] ?? SENTIMENT_CONFIG.NEUTRAL;
+                const ribbon = SENTIMENT_RIBBON[mention.sentiment] ?? SENTIMENT_RIBBON.NEUTRAL;
+                const SourceIcon = src.icon;
                 let hostname = "";
                 try { hostname = mention.url ? new URL(mention.url).hostname.replace("www.", "") : ""; } catch {}
 
@@ -163,35 +181,47 @@ export function MentionsFeed({ filter }: { filter: string }) {
                     key={`${mention.id}-${i}`}
                     initial={{ opacity: 0, y: -8, scale: 0.99 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
+                    whileHover="hover"
                     transition={{ duration: 0.22, delay: Math.min(i * 0.025, 0.3), ease: [0.16, 1, 0.3, 1] }}
-                    className="group rounded-xl border border-border/50 bg-white hover:border-sky-200 hover:shadow-lg hover:shadow-sky-500/8 transition-all duration-200"
+                    className={`group relative rounded-xl border border-border/50 bg-linear-to-r ${src.cardGradient} hover:border-sky-200 hover:shadow-lg hover:shadow-sky-500/8 transition-all duration-200 overflow-hidden`}
                   >
+                    {/* Diagonal sentiment ribbon — top-right corner */}
+                    <div className="absolute top-0 right-0 w-20 h-20 overflow-hidden pointer-events-none">
+                      <div
+                        className={`absolute top-3.5 -right-5 w-24 text-center py-[3px] text-[9px] font-black tracking-widest uppercase rotate-45 shadow-md ${ribbon.bg} ${ribbon.text} ${ribbon.shadow}`}
+                      >
+                        {ribbon.label}
+                      </div>
+                    </div>
+
                     <div className="p-3">
-                      {/* Badges row */}
-                      <div className="flex items-center justify-between gap-2 mb-2">
+                      {/* Top row: source icon badge + keyword + timestamp */}
+                      <div className="flex items-center justify-between gap-2 mb-2.5">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide border ${src.bg} ${src.text} ${src.border}`}>
-                            {src.label.toUpperCase()}
-                          </span>
-                          <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-semibold border ${snt.bg} ${snt.text} ${snt.border}`}>
-                            <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${snt.dot}`} />
-                            {snt.label}
-                          </span>
+                          {/* Brand icon badge — tinted gradient fading to transparent */}
+                          <div className={`inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-3 py-1 bg-linear-to-r ${src.badgeGradient}`}>
+                            <SourceIcon className={`h-3.5 w-3.5 shrink-0 ${src.iconColor}`} />
+                            <span className={`text-[10px] font-bold tracking-wide leading-none ${src.iconColor}`}>{src.label}</span>
+                          </div>
+
                           {mention.keyword?.term && (
-                            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-sky-50 text-sky-700 border border-sky-100">
+                            <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold bg-sky-50 text-sky-700 border border-sky-100">
                               #{mention.keyword.term}
                             </span>
                           )}
                         </div>
-                        <span className="text-[10px] text-muted-foreground/60 whitespace-nowrap shrink-0 font-medium tabular-nums">
+                        <span className="text-[10px] text-muted-foreground/60 whitespace-nowrap shrink-0 font-medium tabular-nums pr-14">
                           {formatDistanceToNow(new Date(mention.publishedAt), { addSuffix: true })}
                         </span>
                       </div>
 
                       {/* Headline */}
-                      <p className="text-[13px] font-semibold text-foreground leading-snug line-clamp-2 mb-2">
+                      <motion.p
+                        variants={wiggle}
+                        className="text-[13px] font-semibold text-foreground leading-snug line-clamp-2 mb-2.5 pr-10"
+                      >
                         {mention.title}
-                      </p>
+                      </motion.p>
 
                       {/* Footer: byline + CTA */}
                       <div className="flex items-center justify-between gap-3">
@@ -206,15 +236,17 @@ export function MentionsFeed({ filter }: { filter: string }) {
                           )}
                         </div>
                         {mention.url ? (
-                          <LinkPreview
-                            url={mention.url}
-                            width={280}
-                            height={160}
-                            className="inline-flex items-center gap-1.5 shrink-0 rounded-lg bg-sky-600 hover:bg-sky-700 px-3 py-1.5 text-[11px] font-bold text-white transition-all duration-150 shadow-sm shadow-sky-500/20 hover:shadow-md hover:shadow-sky-500/30 active:scale-95"
-                          >
-                            Read
-                            <ArrowUpRight className="h-3 w-3" />
-                          </LinkPreview>
+                          <motion.div variants={wiggle} className="shrink-0">
+                            <LinkPreview
+                              url={mention.url}
+                              width={280}
+                              height={160}
+                              className="inline-flex items-center gap-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 px-3 py-1.5 text-[11px] font-bold text-white transition-all duration-150 shadow-sm shadow-sky-500/20 hover:shadow-md hover:shadow-sky-500/30 active:scale-95"
+                            >
+                              Read
+                              <ArrowUpRight className="h-3 w-3" />
+                            </LinkPreview>
+                          </motion.div>
                         ) : (
                           <div />
                         )}
