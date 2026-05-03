@@ -136,13 +136,3 @@ prisma/
   seed.ts              # Demo data seeder
 ```
 
----
-
-## Scoring Notes
-
-| Criteria | Implementation |
-|----------|---------------|
-| Completeness (40pts) | All 3 modules fully built: Monitor, Publisher, Analytics |
-| Real-time & AI (35pts) | Pusher live feed + Gemini 2.5 Flash AI sentiment + AI content generation |
-| UI Polish (15pts) | Brand icon badges, sentiment ribbons, animated hover effects, gradient cards, dock filter, mobile drawer, PDF export |
-| Documentation (10pts) | This README with setup guide, architecture overview, and live demo link |
