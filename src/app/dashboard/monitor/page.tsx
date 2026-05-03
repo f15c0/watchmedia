@@ -29,13 +29,11 @@ export default function MonitorPage() {
         <div className="md:hidden flex justify-center -mt-1">
           <button
             onClick={() => setKeywordsOpen(true)}
-            className="inline-flex items-center gap-2.5 rounded-2xl bg-[#0f1729] px-5 py-2.5 shadow-lg shadow-slate-900/20 active:scale-95 transition-transform duration-100"
+            className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-[12px] font-semibold text-sky-700 shadow-sm active:scale-95 transition-all duration-150"
           >
-            <div className="h-7 w-7 rounded-lg bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
-              <Hash className="h-3.5 w-3.5 text-white" />
-            </div>
-            <span className="text-[13px] font-semibold text-white">Manage Keywords</span>
-            <ChevronUp className="h-3.5 w-3.5 text-white/50 shrink-0" />
+            <Hash className="h-3.5 w-3.5" />
+            Manage Keywords
+            <ChevronUp className="h-3 w-3 opacity-60" />
           </button>
         </div>
 
