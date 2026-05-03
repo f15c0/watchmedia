@@ -29,7 +29,7 @@ export default function MonitorPage() {
         <div className="md:hidden flex justify-center -mt-1">
           <button
             onClick={() => setKeywordsOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-[#007AFF] px-6 py-2.5 text-[15px] font-semibold text-white tracking-tight shadow-md shadow-blue-500/30 active:opacity-80 transition-opacity duration-100"
+            className="inline-flex items-center gap-1.5 rounded-full bg-sky-600 px-6 py-2.5 text-[15px] font-semibold text-white tracking-tight shadow-md shadow-sky-500/30 active:opacity-80 transition-opacity duration-100"
           >
             Manage Keywords
             <ChevronUp className="h-4 w-4 opacity-80" />
