@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, X, Loader2, Hash, Zap } from "lucide-react";
+import { Plus, X, Loader2, Hash, Zap, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,7 +20,7 @@ interface Keyword {
   _count: { mentions: number };
 }
 
-export function KeywordManager() {
+export function KeywordManager({ onClose }: { onClose?: () => void } = {}) {
   const [keywords, setKeywords] = useState<Keyword[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -192,6 +192,7 @@ export function KeywordManager() {
               <p className="text-[10px] text-sky-300/80 mt-0.5">{keywords.length} tracked</p>
             </div>
           </div>
+          <div className="flex items-center gap-2">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
@@ -202,6 +203,15 @@ export function KeywordManager() {
             {scraping ? <Loader2 className="h-3 w-3 animate-spin" /> : <Zap className="h-3 w-3" />}
             {scraping ? "Scraping…" : "Scrape Now"}
           </motion.button>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="h-7 w-7 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/25 text-white/60 hover:text-white transition-colors"
+            >
+              <ChevronDown className="h-4 w-4" />
+            </button>
+          )}
+          </div>
         </div>
       </div>
 
