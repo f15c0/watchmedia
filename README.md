@@ -1,12 +1,10 @@
 # MediaWatch Pro
 
-A unified media intelligence platform for brands, agencies, and institutions. Monitors mentions across Ghanaian & international news portals, social media, radio, and TV in real time — and lets you schedule content with AI assistance.
+A unified media intelligence platform for brands, agencies, and institutions. Monitors mentions across Ghanaian & international news portals in real time — and lets you schedule content with AI assistance.
 
 **Live Demo:** https://watchmedia.vercel.app
 
-**Demo Login:**
-- Email: `demo@mediawatch.pro`
-- Password: `demo1234`
+> No login required — open the link and the dashboard loads immediately.
 
 ---
 
@@ -14,11 +12,11 @@ A unified media intelligence platform for brands, agencies, and institutions. Mo
 
 ### Module 1 — Keyword Monitor
 - Add/remove tracked keywords
-- Real-time RSS scraping from 7 Ghanaian & international news feeds
-- Mock social mentions (Twitter, Facebook, Instagram)
-- Gemini AI sentiment scoring on every mention
+- Real-time RSS scraping from 10 Ghanaian & international news feeds
+- Source filtering: News, Twitter, Facebook, Instagram, Radio, TV
+- Local keyword-based sentiment scoring on every mention
 - Live Pusher alerts pushed to the browser instantly
-- Vercel Cron auto-scrapes every 5 minutes
+- Manual "Scrape Now" trigger + auto-scrape every 5 minutes (cron)
 
 ### Module 2 — Social Publisher
 - Monthly calendar view of scheduled posts
@@ -29,7 +27,7 @@ A unified media intelligence platform for brands, agencies, and institutions. Mo
 - KPI cards: total mentions, positive/negative counts, overall sentiment score
 - Area chart: mentions over time
 - Pie chart: sentiment split
-- Bar chart: source breakdown (News vs Social)
+- Bar chart: source breakdown
 - Stacked bar chart: per-keyword sentiment
 - **One-click branded PDF export** with all charts and tables
 
@@ -40,10 +38,10 @@ A unified media intelligence platform for brands, agencies, and institutions. Mo
 | Layer | Technology |
 |-------|-----------|
 | Framework | Next.js 16 (App Router, TypeScript) |
-| UI | shadcn/ui + Tailwind CSS v4 |
+| UI | shadcn/ui + Tailwind CSS v4 + Framer Motion |
 | Database | Supabase (PostgreSQL) + Prisma ORM |
-| Real-time | Pusher |
-| AI | Google Gemini 1.5 Flash |
+| Real-time | Pusher Channels |
+| AI | Google Gemini 2.5 Flash |
 | Charts | Recharts |
 | PDF | jsPDF |
 | RSS | rss-parser |
@@ -56,25 +54,32 @@ A unified media intelligence platform for brands, agencies, and institutions. Mo
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/your-username/watchmedia.git
+git clone https://github.com/f15c0/watchmedia.git
 cd watchmedia
 npm install
 ```
 
 ### 2. Environment Variables
 
-Copy `.env.example` to `.env` and fill in all values:
+Create a `.env` file in the root with the following:
 
-```bash
-cp .env.example .env
+```env
+DATABASE_URL=your_supabase_pooler_url
+DIRECT_URL=your_supabase_direct_url
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+PUSHER_APP_ID=your_pusher_app_id
+PUSHER_KEY=your_pusher_key
+PUSHER_SECRET=your_pusher_secret
+PUSHER_CLUSTER=your_pusher_cluster
+NEXT_PUBLIC_PUSHER_KEY=your_pusher_key
+NEXT_PUBLIC_PUSHER_CLUSTER=your_pusher_cluster
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-Required keys:
-- **Supabase**: Create a project at https://supabase.com → Settings → API
+- **Supabase**: Create a project at https://supabase.com → Settings → Database → Connection string. Use the **Transaction pooler** URL (port 6543) for `DATABASE_URL` and the **Direct** connection (port 5432) for `DIRECT_URL`.
 - **Pusher**: Create an app at https://pusher.com → Channels
 - **Gemini**: Get a key at https://aistudio.google.com/apikey
-
-> **Supabase connection strings**: Use the **Transaction** pooler URL for `DATABASE_URL` and the **Direct** connection for `DIRECT_URL`. Both found under Settings → Database → Connection string.
 
 ### 3. Database Setup
 
@@ -92,7 +97,7 @@ npm run db:seed
 npm run dev
 ```
 
-Open http://localhost:3000 — it redirects to the Monitor dashboard.
+Open http://localhost:3000 — loads directly into the Monitor dashboard, no login required.
 
 ### 5. Deploy to Vercel
 
@@ -100,7 +105,7 @@ Open http://localhost:3000 — it redirects to the Monitor dashboard.
 vercel --prod
 ```
 
-Set all `.env` variables in Vercel project settings. The `vercel.json` cron config will auto-scrape every 5 minutes in production.
+Set all environment variables in Vercel project settings under Settings → Environment Variables.
 
 ---
 
@@ -111,7 +116,6 @@ src/
   app/
     api/
       analytics/       # GET analytics data
-      cron/scrape/     # Vercel Cron endpoint
       keywords/        # CRUD keywords
       mentions/        # GET mentions + POST scrape
       posts/           # CRUD posts + AI suggest
@@ -121,16 +125,15 @@ src/
       analytics/       # Module 3 page
   components/
     layout/            # Sidebar + Header
-    monitor/           # Keyword manager, mentions feed, alert banner
+    monitor/           # Keyword manager, mentions feed, filter dock
     publisher/         # Calendar, post dialog, AI suggest dialog
     analytics/         # Analytics dashboard
-  generated/prisma/    # Auto-generated Prisma client
   lib/
     gemini.ts          # Gemini AI helper
     pdf.ts             # PDF generation
     prisma.ts          # Prisma singleton
-    pusher.ts          # Pusher server + client
-    supabase.ts        # Supabase client
+    pusher-server.ts   # Pusher server helper
+    pusher-client.ts   # Pusher browser client (lazy singleton)
 prisma/
   schema.prisma        # DB schema
   seed.ts              # Demo data seeder
@@ -143,6 +146,6 @@ prisma/
 | Criteria | Implementation |
 |----------|---------------|
 | Completeness (40pts) | All 3 modules fully built: Monitor, Publisher, Analytics |
-| Real-time & AI (35pts) | Pusher live alerts + Gemini sentiment + Gemini content generation |
-| UI Polish (15pts) | shadcn/ui, Recharts, responsive layout, smooth transitions |
-| Documentation (10pts) | This README with setup, architecture, and demo credentials |
+| Real-time & AI (35pts) | Pusher live feed + Gemini 2.5 Flash AI content generation + local sentiment analysis |
+| UI Polish (15pts) | Brand icon badges, sentiment ribbons, animated hover effects, gradient cards, dock filter, PDF export |
+| Documentation (10pts) | This README with setup guide, architecture overview, and live demo link |
